@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router";
 import { Root } from "@/Root";
 import App from "@/App";
-import { Customers } from "@/pages/Customers";
-import Dashboard from "@/pages/Dashboard";
-import { Inventory } from "@/pages/Inventory";
-import { Sales } from "@/pages/Sales";
+import Dashboard from "@/pages/Dashboard/Dashboard";
+import { Inventory } from "@/pages/Inventory/Inventory";
+import { Sales } from "@/pages/Sales/Sales";
+import { Customers } from "@/pages/Customers/Customers";
 
 export const router = createBrowserRouter([
     {
