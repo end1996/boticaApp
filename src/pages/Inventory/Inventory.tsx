@@ -184,7 +184,7 @@ export const Inventory = () => {
                         bg: "bg-red-100",
                         textColor: "text-red-700",
                       }
-                    : p.stock < 10
+                    : p.stock < 5
                     ? {
                         text: "Bajo Stock",
                         bg: "bg-yellow-100",
