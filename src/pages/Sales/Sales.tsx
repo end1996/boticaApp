@@ -1,28 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CircleX, CreditCard, Search } from "lucide-react";
 import { Product } from "@/types/Product";
 import { SaleItem } from "@/types/Sale";
 import { createSale } from "@/services/salesService";
-import { getProducts } from "@/services/productService";
+import { useOutletContext } from "react-router";
+import { AppContextType } from "@/types/AppContextType";
 
 export const Sales = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products } = useOutletContext<AppContextType>();
   const [cart, setCart] = useState<SaleItem[]>([]);
   const [filter, setFilter] = useState("");
   const [discount, setDiscount] = useState(0);
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
-    try {
-      const data = await getProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error("Error al cargar productos:", error);
-    }
-  };
 
   const handleAddToCart = (product: Product) => {
     const existing = cart.find((item) => item.product._id === product._id);

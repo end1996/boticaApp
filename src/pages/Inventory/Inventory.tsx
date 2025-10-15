@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   ChevronDown,
   ChevronLeft,
@@ -10,10 +9,14 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { Product } from "@/types/Product";
-import { getProducts, createProduct } from "@/services/productService";
+import { AppContextType } from "@/types/AppContextType";
+import { createProduct } from "@/services/productService";
+import { useOutletContext } from "react-router";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const Inventory = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products, loadProducts } = useOutletContext<AppContextType>();
   const [filter, setFilter] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [newProduct, setNewProduct] = useState<Omit<Product, "_id">>({
@@ -27,26 +30,17 @@ export const Inventory = () => {
     loadProducts();
   }, []);
 
-  const loadProducts = async () => {
-    try {
-      const data = await getProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error("Error al cargar productos:", error);
-    }
-  };
-
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await createProduct(newProduct);
       setNewProduct({ name: "", description: "", price: 0, stock: 0 });
       setShowForm(false);
-      await loadProducts();
-      alert("Producto agregado correctamente");
+      await loadProducts(); // Recarga productos globalmente
+      toast.success("Producto agregado correctamente");
     } catch (error) {
       console.error(error);
-      alert("Error al crear el producto");
+      toast.error("Error al crear el producto" + error);
     }
   };
 

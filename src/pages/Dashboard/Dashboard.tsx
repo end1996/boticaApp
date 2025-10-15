@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useOutletContext } from "react-router";
 import { getSales } from "@/services/salesService";
 import { Sale } from "@/types/Sale";
-
+import { AppContextType } from "@/types/AppContextType";
 
 export default function Dashboard() {
   const [sales, setSales] = useState<Sale[]>([]);
+  const { products } = useOutletContext<AppContextType>();
 
+  // Cargar ventas al iniciar
   useEffect(() => {
     loadSales();
   }, []);
@@ -119,7 +121,7 @@ export default function Dashboard() {
             </svg>
             <div className="absolute flex flex-col items-center">
               <p className="text-[#0e1b13] dark:text-white text-3xl font-bold">
-                8,765
+                {products.length}
               </p>
               <p className="text-[#50956c] dark:text-gray-400 text-sm">
                 Total Items
