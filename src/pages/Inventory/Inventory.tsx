@@ -1,5 +1,4 @@
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Edit,
@@ -10,46 +9,86 @@ import {
 } from "lucide-react";
 import { Product } from "@/types/Product";
 import { AppContextType } from "@/types/AppContextType";
-import { createProduct } from "@/services/productService";
+import {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+} from "@/services/productService";
 import { useOutletContext } from "react-router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export const Inventory = () => {
   const { products, loadProducts } = useOutletContext<AppContextType>();
-  const [filter, setFilter] = useState("");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [search, setSearch] = useState("");
+  const [stockFilter, setStockFilter] = useState<"all" | "low" | "out">("all");
   const [showForm, setShowForm] = useState(false);
   const [newProduct, setNewProduct] = useState<Omit<Product, "_id">>({
     name: "",
-    description: "",
     price: 0,
     stock: 0,
+    alertLevel: 5,
   });
 
   useEffect(() => {
     loadProducts();
   }, []);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      await createProduct(newProduct);
-      setNewProduct({ name: "", description: "", price: 0, stock: 0 });
+      if (editingProduct) {
+        // Editar producto existente
+        await updateProduct(editingProduct._id, newProduct);
+        toast.success("Producto actualizado correctamente");
+      } else {
+        // Crear producto nuevo
+        await createProduct(newProduct);
+        toast.success("Producto agregado correctamente");
+      }
+
+      // Reset
+      setNewProduct({ name: "", price: 0, stock: 0, alertLevel: 5 });
+      setEditingProduct(null);
       setShowForm(false);
-      await loadProducts(); // Recarga productos globalmente
-      toast.success("Producto agregado correctamente");
+      await loadProducts();
     } catch (error) {
       console.error(error);
-      toast.error("Error al crear el producto" + error);
+      toast.error("Error al guardar el producto");
     }
   };
 
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const handleDelete = async (productId: string) => {
+    if (!toast("¿Estás seguro de eliminar este producto?")) return;
+    try {
+      await deleteProduct(productId);
+      await loadProducts(); // Recarga productos globalmente
+      toast.success("Producto eliminado correctamente");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al eliminar el producto");
+    }
+  };
+
+  const filtered = products.filter((p) => {
+    // Filtro de texto
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+
+    // Filtro de stock
+    const matchesStock =
+      stockFilter === "all"
+        ? true
+        : stockFilter === "low"
+        ? p.stock < (p.alertLevel ?? 5) && p.stock > 0
+        : p.stock === 0;
+
+    return matchesSearch && matchesStock;
+  });
 
   return (
-    <div className="flex-1 py-8">
+    <div className="flex-1 p-8">
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div className="flex min-w-72 flex-col gap-1">
           <p className="text-text-light dark:text-text-dark text-3xl font-black leading-tight tracking-[-0.03em]">
@@ -64,15 +103,15 @@ export const Inventory = () => {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex-1">
           <label className="flex flex-col min-w-40 h-12 w-full">
-            <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
-              <div className="text-gray-500 dark:text-gray-400 flex border-none bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
+            <div className="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100">
+              <div className="text-gray-500 dark:text-gray-400 flex border-none dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
                 <Search />
               </div>
               <input
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 pl-2 text-base font-normal leading-normal"
                 placeholder="Buscar por nombre de producto..."
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </label>
@@ -80,27 +119,46 @@ export const Inventory = () => {
 
         <div className="flex gap-2">
           <div className="flex gap-2">
-            <button className="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4">
-              <p className="text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                Todos
-              </p>
-              <ChevronDown />
+            <button
+              onClick={() => setStockFilter("all")}
+              className={`flex h-12 items-center justify-center gap-x-2 rounded-lg border px-4 transition 
+    ${
+      stockFilter === "all"
+        ? "bg-blue-500 text-white border-[#3b82f6]"
+        : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-text-light dark:text-text-dark cursor-pointer"
+    }`}
+            >
+              Todos
             </button>
-            <button className="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4">
-              <p className="text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                Bajo Stock
-              </p>
+
+            <button
+              onClick={() => setStockFilter("low")}
+              className={`flex h-12 items-center justify-center gap-x-2 rounded-lg border px-4 transition 
+    ${
+      stockFilter === "low"
+        ? "bg-yellow-400 text-black border-yellow-400"
+        : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-text-light dark:text-text-dark cursor-pointer"
+    }`}
+            >
+              Bajo Stock
             </button>
-            <button className="flex h-12 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4">
-              <p className="text-text-light dark:text-text-dark text-sm font-medium leading-normal">
-                Agotado
-              </p>
+
+            <button
+              onClick={() => setStockFilter("out")}
+              className={`flex h-12 items-center justify-center gap-x-2 rounded-lg border px-4 transition 
+    ${
+      stockFilter === "out"
+        ? "bg-red-500 text-white border-red-500"
+        : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-text-light dark:text-text-dark cursor-pointer"
+    }`}
+            >
+              Agotado
             </button>
           </div>
 
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary gap-2 pl-4 text-base font-bold leading-normal tracking-[0.015em]"
+            className="flex min-w-[84px] max-w-[480px] bg-slate-200 hover:bg-green-300 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary gap-2 pl-4 text-base font-bold leading-normal tracking-[0.015em]"
           >
             <Plus />
             <span className="truncate hidden sm:inline">
@@ -112,54 +170,98 @@ export const Inventory = () => {
 
       {showForm && (
         <form
-          onSubmit={handleCreate}
-          className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-6 grid gap-4 sm:grid-cols-2"
+          onSubmit={handleSubmit}
+          className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md mb-6 max-w-3xl mx-auto border border-gray-200 dark:border-gray-700 transition-all duration-300"
         >
-          <input
-            type="text"
-            placeholder="Nombre del producto"
-            className="border px-3 py-2 rounded-lg w-full"
-            value={newProduct.name}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, name: e.target.value })
-            }
-            required
-          />
-          <input
-            type="text"
-            placeholder="Descripción"
-            className="border px-3 py-2 rounded-lg w-full"
-            value={newProduct.description}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, description: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Precio unitario"
-            className="border px-3 py-2 rounded-lg w-full"
-            value={newProduct.price}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, price: Number(e.target.value) })
-            }
-            required
-          />
-          <input
-            type="number"
-            placeholder="Cantidad en stock"
-            className="border px-3 py-2 rounded-lg w-full"
-            value={newProduct.stock}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, stock: Number(e.target.value) })
-            }
-            required
-          />
-          <button
-            type="submit"
-            className="bg-primary text-white px-4 py-2 rounded-lg sm:col-span-2 hover:bg-primary/90"
-          >
-            Guardar producto
-          </button>
+          <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100 flex items-center gap-2">
+            <Plus className="w-5 h-5 text-primary" />
+            {editingProduct ? "Editar Producto" : "Nuevo Producto"}
+          </h3>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Nombre del producto
+              </label>
+              <input
+                type="text"
+                placeholder="Ej: Paracetamol 500mg"
+                className="border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-primary/50 focus:border-primary text-gray-800 dark:text-gray-100"
+                value={newProduct.name}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, name: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Precio unitario (S/)
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Ej: 12.50"
+                className="border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-primary/50 focus:border-primary text-gray-800 dark:text-gray-100"
+                value={newProduct.price}
+                onChange={(e) =>
+                  setNewProduct({
+                    ...newProduct,
+                    price: Number(e.target.value),
+                  })
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Cantidad en stock
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="Ej: 100"
+                className="border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-primary/50 focus:border-primary text-gray-800 dark:text-gray-100"
+                value={newProduct.stock}
+                onChange={(e) =>
+                  setNewProduct({
+                    ...newProduct,
+                    stock: Number(e.target.value),
+                  })
+                }
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-6 gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setShowForm(false);
+                setEditingProduct(null);
+                setNewProduct({
+                  name: "",
+                  price: 0,
+                  stock: 0,
+                  alertLevel: 5,
+                });
+              }}
+              className="px-4 py-2 rounded-lg border text-white bg-red-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-gray-60 dark:text-gray-200 font-medium transition cursor-pointer"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              className="px-5 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition cursor-pointer"
+            >
+              {editingProduct ? "Guardar Cambios" : "Guardar Producto"}
+            </button>
+          </div>
         </form>
       )}
 
@@ -215,10 +317,26 @@ export const Inventory = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 flex justify-center gap-2">
-                      <button className="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-400">
+                      <button
+                        className="p-2 text-blue-500 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 dark:text-gray-400 cursor-pointer"
+                        onClick={() => {
+                          setNewProduct({
+                            name: p.name,
+                            price: p.price,
+                            stock: p.stock,
+                            alertLevel: p.alertLevel,
+                          });
+                          setEditingProduct(p);
+                          setShowForm(true);
+                        }}
+                      >
                         <Edit />
                       </button>
-                      <button className="p-2 text-danger rounded-lg hover:bg-danger/10">
+
+                      <button
+                        className="p-2 text-red-500 rounded-lg hover:bg-red-100 cursor-pointer"
+                        onClick={() => handleDelete(p._id)}
+                      >
                         <Trash />
                       </button>
                     </td>

@@ -62,7 +62,7 @@ export const Sales = () => {
             <p className="text-[#0e1b13] dark:text-white text-4xl font-black tracking-tight">
               Punto de Venta
             </p>
-            <p className="text-[#50956c] dark:text-gray-400 text-base font-normal">
+            <p className=" dark:text-gray-400 text-base font-normal">
               Registre una nueva venta para un cliente.
             </p>
           </div>
@@ -73,13 +73,13 @@ export const Sales = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div>
               <label className="flex flex-col min-w-40 h-12 w-full">
-                <div className="flex w-full items-stretch rounded-lg h-full">
-                  <div className="text-[#50956c] dark:text-gray-300 flex bg-[#e8f3ec] dark:bg-gray-700/50 items-center justify-center pl-4 rounded-l-lg">
+                <div className="flex w-full items-stretch rounded-lg h-full bg-slate-100">
+                  <div className="dark:text-gray-300 flex dark:bg-gray-700/50 items-center justify-center pl-4 rounded-l-lg">
                     <Search />
                   </div>
                   <input
                     type="text"
-                    className="form-input flex w-full rounded-r-lg text-[#0e1b13] dark:text-white bg-[#e8f3ec] dark:bg-gray-700/50 px-4"
+                    className="form-input flex w-full rounded-r-lg dark:text-white dark:bg-gray-700/50 px-4"
                     placeholder="Buscar producto por nombre o código"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
@@ -152,7 +152,7 @@ export const Sales = () => {
                 {filteredProducts.map((product) => (
                   <button
                     key={product._id}
-                    className="bg-green-100 dark:bg-green-700/30 px-3 py-1 rounded hover:bg-green-200"
+                    className="bg-slate-300 px-3 py-1 rounded hover:bg-green-200 cursor-pointer"
                     onClick={() => handleAddToCart(product)}
                   >
                     {product.name} - ${product.price.toFixed(2)}
@@ -169,28 +169,22 @@ export const Sales = () => {
             </h3>
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
-                <p className="text-[#50956c] dark:text-gray-400 text-sm">
-                  Subtotal
-                </p>
+                <p className=" dark:text-gray-400 text-sm">Subtotal</p>
                 <p className="text-[#0e1b13] dark:text-white text-sm font-medium">
                   ${subtotal.toFixed(2)}
                 </p>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-[#50956c] dark:text-gray-400 text-sm">
-                  Descuento (%)
-                </p>
+                <p className=" dark:text-gray-400 text-sm">Descuento (%)</p>
                 <input
                   type="number"
-                  className="form-input w-20 rounded-md bg-[#e8f3ec] dark:bg-gray-700 text-right"
+                  className="form-input w-20 rounded-md bg-slate-300 dark:bg-gray-700 text-right"
                   value={discount}
                   onChange={(e) => setDiscount(Number(e.target.value))}
                 />
               </div>
               <div className="flex justify-between">
-                <p className="text-[#50956c] dark:text-gray-400 text-sm">
-                  Impuestos (18%)
-                </p>
+                <p className=" dark:text-gray-400 text-sm">Impuestos (18%)</p>
                 <p className="text-[#0e1b13] dark:text-white text-sm font-medium">
                   ${tax.toFixed(2)}
                 </p>
@@ -208,14 +202,14 @@ export const Sales = () => {
             <div className="space-y-3">
               <button
                 onClick={handleProcessSale}
-                className="w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-base font-bold hover:bg-primary/90 transition-colors"
+                className="w-full flex items-center text-white justify-center gap-2 h-12 px-6 rounded-lg bg-blue-500 text-base font-bold hover:bg-blue-600 transition-colors cursor-pointer"
               >
                 <CreditCard />
                 Procesar Pago
               </button>
               <button
                 onClick={() => setCart([])}
-                className="w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-danger text-base font-bold hover:bg-danger/90 transition-colors"
+                className="w-full flex items-center text-white justify-center gap-2 h-12 px-6 rounded-lg bg-red-500 text-base font-bold hover:bg-red-600 transition-colors cursor-pointer"
               >
                 <CircleX />
                 Cancelar Venta

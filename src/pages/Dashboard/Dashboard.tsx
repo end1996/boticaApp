@@ -4,7 +4,6 @@ import { getSales } from "@/services/salesService";
 import { Sale } from "@/types/Sale";
 import { AppContextType } from "@/types/AppContextType";
 import { getLowStockProduct } from "@/services/productService";
-import InventoryCharts from "@components/ui/InventoryChart";
 import InventoryChart from "@components/ui/InventoryChart";
 
 export default function Dashboard() {
@@ -55,7 +54,7 @@ export default function Dashboard() {
   const totalSales = sales.reduce((acc, s) => acc + s.total, 0);
 
   return (
-    <div>
+    <div className="p-8">
       <p className="text-text-light dark:text-text-dark text-3xl font-black leading-tight tracking-[-0.03em]">
         Dashboard
       </p>
