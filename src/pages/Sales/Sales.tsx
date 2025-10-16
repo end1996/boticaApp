@@ -5,6 +5,7 @@ import { SaleItem } from "@/types/Sale";
 import { createSale } from "@/services/salesService";
 import { useOutletContext } from "react-router";
 import { AppContextType } from "@/types/AppContextType";
+import toast from "react-hot-toast";
 
 export const Sales = () => {
   const { products } = useOutletContext<AppContextType>();
@@ -43,10 +44,9 @@ export const Sales = () => {
       await createSale({ items: cart, discount, total });
       setCart([]);
       setDiscount(0);
-      alert("Venta registrada correctamente");
+      toast.success("Venta registrada correctamente");
     } catch (error) {
-      console.error(error);
-      alert("Error al procesar la venta");
+      toast.error("Error al procesar la venta")
     }
   };
 
@@ -73,7 +73,7 @@ export const Sales = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div>
               <label className="flex flex-col min-w-40 h-12 w-full">
-                <div className="flex w-full items-stretch rounded-lg h-full bg-slate-100">
+                <div className="flex w-full items-stretch rounded-lg h-full bg-white">
                   <div className="dark:text-gray-300 flex dark:bg-gray-700/50 items-center justify-center pl-4 rounded-l-lg">
                     <Search />
                   </div>
@@ -111,7 +111,7 @@ export const Sales = () => {
                         <td className="px-4 py-3">
                           <input
                             type="number"
-                            className="form-input w-20 rounded-md bg-[#e8f3ec] dark:bg-gray-700 text-center"
+                            className="form-input w-20 rounded-md bg-slate-100 dark:bg-gray-700 text-center"
                             value={item.quantity}
                             min={1}
                             onChange={(e) =>
@@ -125,11 +125,11 @@ export const Sales = () => {
                             }
                           />
                         </td>
-                        <td className="px-4 py-3 text-sm font-normal text-[#50956c] dark:text-gray-400">
-                          ${item.product.price.toFixed(2)}
+                        <td className="px-4 py-3 text-sm font-normal dark:text-gray-400">
+                          S/.{item.product.price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-sm font-normal text-[#50956c] dark:text-gray-400">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                        <td className="px-4 py-3 text-sm font-normal dark:text-gray-400">
+                          S/.{(item.product.price * item.quantity).toFixed(2)}
                         </td>
                         <td className="px-4 py-3 text-center">
                           <button
@@ -155,7 +155,7 @@ export const Sales = () => {
                     className="bg-slate-300 px-3 py-1 rounded hover:bg-green-200 cursor-pointer"
                     onClick={() => handleAddToCart(product)}
                   >
-                    {product.name} - ${product.price.toFixed(2)}
+                    {product.name} - S/.{product.price.toFixed(2)}
                   </button>
                 ))}
               </div>
@@ -171,7 +171,7 @@ export const Sales = () => {
               <div className="flex justify-between">
                 <p className=" dark:text-gray-400 text-sm">Subtotal</p>
                 <p className="text-[#0e1b13] dark:text-white text-sm font-medium">
-                  ${subtotal.toFixed(2)}
+                  S/.{subtotal.toFixed(2)}
                 </p>
               </div>
               <div className="flex justify-between items-center">
@@ -186,7 +186,7 @@ export const Sales = () => {
               <div className="flex justify-between">
                 <p className=" dark:text-gray-400 text-sm">Impuestos (18%)</p>
                 <p className="text-[#0e1b13] dark:text-white text-sm font-medium">
-                  ${tax.toFixed(2)}
+                  S/.{tax.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -196,7 +196,7 @@ export const Sales = () => {
                 Total
               </p>
               <p className="text-[#0e1b13] dark:text-white text-2xl font-bold">
-                ${total.toFixed(2)}
+                S/.{total.toFixed(2)}
               </p>
             </div>
             <div className="space-y-3">

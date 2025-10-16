@@ -29,7 +29,6 @@ export default function Dashboard() {
   const loadLowStockProduct = async () => {
     try {
       const response = await getLowStockProduct();
-      console.log("Low stock products:", response);
       setLowStockCount(response.length);
     } catch (error) {
       console.error("Error al cargar productos con bajo stock:", error);
@@ -55,11 +54,11 @@ export default function Dashboard() {
 
   return (
     <div className="p-8">
-      <p className="text-text-light dark:text-text-dark text-3xl font-black leading-tight tracking-[-0.03em]">
+      <p className="mb-8 text-text-light text-4xl dark:text-text-dark font-black leading-tight tracking-[-0.03em]">
         Dashboard
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <div className="flex flex-col gap-2 rounded-lg p-6 border border-[#d1e6d9] dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex flex-col gap-2 rounded-lg p-6 border border-green-500 dark:border-gray-700 bg-green-100 dark:bg-gray-800">
           <p className="text-[#0e1b13] dark:text-gray-300 text-base font-medium leading-normal">
             Ventas del Día
           </p>
@@ -67,7 +66,7 @@ export default function Dashboard() {
             S/.{totalToday.toFixed(2)}
           </p>
         </div>
-        <div className="flex flex-col gap-2 rounded-lg p-6 border border-[#d1e6d9] dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex flex-col gap-2 rounded-lg p-6 border border-red-500 dark:border-gray-700 bg-red-100 dark:bg-gray-800">
           <p className="text-[#0e1b13] dark:text-gray-300 text-base font-medium leading-normal">
             Productos con Bajo Stock
           </p>
@@ -75,7 +74,7 @@ export default function Dashboard() {
             {lowStockCount}
           </p>
         </div>
-        <div className="flex flex-col gap-2 rounded-lg p-6 border border-[#d1e6d9] dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex flex-col gap-2 rounded-lg p-6 border border-blue-500 dark:border-gray-700 bg-blue-100 dark:bg-gray-800">
           <p className="text-[#0e1b13] dark:text-gray-300 text-base font-medium leading-normal">
             Clientes Atendidos Hoy
           </p>
@@ -87,7 +86,7 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div className="flex flex-col gap-2 rounded-lg border border-[#d1e6d9] dark:border-gray-700 p-6 bg-white dark:bg-gray-800">
+        <div className="flex flex-col gap-2 rounded-lg border border-green-500 dark:border-gray-700 p-6 bg-white dark:bg-gray-800">
           <p className="text-[#0e1b13] dark:text-gray-300 text-base font-medium leading-normal">
             Ventas
           </p>
@@ -97,7 +96,7 @@ export default function Dashboard() {
           {/* Puedes agregar más info de la semana aquí */}
         </div>
 
-        <div className="flex flex-col gap-2 rounded-lg border border-[#d1e6d9] dark:border-gray-700 p-6 bg-white dark:bg-gray-800">
+        <div className="flex flex-col gap-2 rounded-lg border border-dark dark:border-gray-700 p-6 bg-white dark:bg-gray-800">
           <p className="text-[#0e1b13] dark:text-gray-300 text-base font-medium leading-normal">
             Niveles de Inventario
           </p>

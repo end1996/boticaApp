@@ -59,7 +59,7 @@ export default function InventoryChart({
         <p className="text-[#0e1b13] dark:text-white text-3xl font-bold">
           {totalProducts}
         </p>
-        <p className="text-[#50956c] dark:text-gray-400 text-sm">
+        <p className="dark:text-gray-400 text-sm">
           Cantidad de productos
         </p>
       </div>

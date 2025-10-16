@@ -91,7 +91,7 @@ export const Inventory = () => {
     <div className="flex-1 p-8">
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div className="flex min-w-72 flex-col gap-1">
-          <p className="text-text-light dark:text-text-dark text-3xl font-black leading-tight tracking-[-0.03em]">
+          <p className="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.03em]">
             Gestión de Inventario
           </p>
           <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">
@@ -103,12 +103,12 @@ export const Inventory = () => {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex-1">
           <label className="flex flex-col min-w-40 h-12 w-full">
-            <div className="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100">
+            <div className="flex w-full flex-1 items-stretch rounded-lg h-full bg-white">
               <div className="text-gray-500 dark:text-gray-400 flex border-none dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
                 <Search />
               </div>
               <input
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 pl-2 text-base font-normal leading-normal"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-primary h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 pl-2 text-base font-normal leading-normal"
                 placeholder="Buscar por nombre de producto..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -158,7 +158,7 @@ export const Inventory = () => {
 
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex min-w-[84px] max-w-[480px] bg-slate-200 hover:bg-green-300 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary gap-2 pl-4 text-base font-bold leading-normal tracking-[0.015em]"
+            className="flex min-w-[84px] max-w-[480px] bg-green-400 hover:bg-green-300 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary gap-2 pl-4 text-base font-bold leading-normal tracking-[0.015em]"
           >
             <Plus />
             <span className="truncate hidden sm:inline">

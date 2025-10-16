@@ -26,7 +26,7 @@ function App() {
   return (
     <div className="flex">
       <SideMenu />
-      <div className="flex-1 sm:ml-64">
+      <div className="h-dvh flex-1 sm:ml-64 bg-slate-100">
         {/* Outlet con contexto compartido */}
         <Outlet context={{ products, setProducts, loadProducts }} />
       </div>

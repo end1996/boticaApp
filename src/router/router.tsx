@@ -4,7 +4,6 @@ import App from "@/App";
 import Dashboard from "@/pages/Dashboard/Dashboard";
 import { Inventory } from "@/pages/Inventory/Inventory";
 import { Sales } from "@/pages/Sales/Sales";
-import { Customers } from "@/pages/Customers/Customers";
 
 export const router = createBrowserRouter([
     {
@@ -25,10 +24,6 @@ export const router = createBrowserRouter([
                     {
                         path: "sales",
                         element: <Sales />,
-                    },
-                    {
-                        path: "customers",
-                        element: <Customers />,
                     },
                 ],
             },
